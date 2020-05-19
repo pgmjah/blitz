@@ -194,6 +194,9 @@ _p._onRequest = function(request, response)
 	if((urlInfo.pathname.search('/blitz') == 0))
 	{
 		let payload = null;
+		if(urlInfo.pathname === '/blitz')
+			return this.loadPage('/public/index.html', request, response);
+		else
 		if((urlInfo.pathname.search('/blitz/user/add') == 0))
 			payload = this.addUser(parms);
 		else

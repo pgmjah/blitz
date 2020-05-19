@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<title>ibx/React App</title>
+
+	<script type='text/javascript' src='/public/ibx/resources/ibx.js'></script>
+	<script type='module' defer='true'>
+		let userInfo = null;
+		ibx(function()
+		{
+			$('.sign-on-popup').ibxWidget('open').focus();
+			$('.sign-on-popup .ok-btn').on('click', async (e)=>
+			{
+				const username = $('.sign-on-popup .user-name').ibxWidget('value');
+				const fetchInfo = await fetch(`/blitz/user/add?username=${username}`);
+				userInfo = await fetchInfo.json(); 
+				if(userInfo.status === 1000)
+					$('.sign-on-popup').ibxWidget('close');
+				initGame(userInfo);
+			});
+
+			function initGame(userInfo)
+			{
+				console.log(userInfo);
+			}
+		}, [], true);
+	</script>
+	<style type='text/css'>
+		html, body{
+			position:absolute;
+			width:100%;
+			height:100%;
+			margin:0;
+			box-sizing:border-box;
+		}
+		.main-box{
+			padding:10px;
+			box-sizing:border-box;
+		}
+		.sign-on-popup > .content-box{
+			width:10em;
+			height:3em;
+			padding:2em;
+			font-size:1.5em;
+		}
+		.sign-on-popup > .content-box > div{
+			flex:0 0 auto;
+			margin:.5em;
+		}
+	</style>
+</head>
+<body class='ibx-root'>
+	<div class='main-box' data-ibx-type='ibxVBox' data-ibxp-align='center' data-ibxp-justify='center'>
+	</div>
+
+	<div tabindex='0' class='sign-on-popup' data-ibx-type='ibxPopup' data-ibxp-auto-close='false'>
+		<div tabindex='0' class='content-box' data-ibx-type='ibxVBox' data-ibxp-align='stretch' data-ibxp-justify='center'>
+			<div tabindex='0' class='user-name ibx-default-focused' data-ibx-type='ibxTextField' data-ibxp-placeholder='Player Name'></div>
+			<div tabindex='0' class='ok-btn' data-ibx-type='ibxButton'>Sign in</div>
+		</div>
+	</div>
+</html>
