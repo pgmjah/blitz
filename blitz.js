@@ -193,17 +193,19 @@ _p._onRequest = function(request, response)
 		this.loadProxy(query.uri, request, response);
 	if((urlInfo.pathname.search('/blitz') == 0))
 	{
-		var url = urls.parse(request.url);
-		var  parms = qs.parse(url.query);
+		let ret = {"code":-1000};
+		const url = urls.parse(request.url);
+		const  parms = qs.parse(url.query);
 		if(parms.cmd == 'adduser')
 		{
-			if(this.users[parms.username.toLowerCase()])
-				response.write(`username ${parms.username} is already in use`);
+			const user = this.users[parms.username.toLowerCase()];
+			if(user)
+				ret = {"status":-1001, "msg":"User already exists", "cmd":parms.cmd, "user":user};
 			else
 			{
 				const user = {username:parms.username, sesid:uuidv4()};
 				this.users[parms.username.toLowerCase()] = user;
-				response.write(`Added user ${parms.username}, sesid: ${user.sesid}`);
+				ret = {"status":1000, "msg":"User added", "cmd":parms.cmd, "user":user}
 			}
 		}
 		else
@@ -211,13 +213,20 @@ _p._onRequest = function(request, response)
 		{
 			const user = this.users[parms.username.toLowerCase()];
 			if(!user || user.sesid != parms.sesid)
-				response.write(`Not authorized to remove user: ${parms.username}, or user unknown.`);
+				ret = {"status":-1002, "msg":"User not found, or not authorized.", "cmd":parms.cmd, "user":user};
 			else
 			{
 				delete this.users[parms.username];
-				response.write(`User ${parms.username} removed.`);
+				ret = {"status":1000, "msg":"User removed.", "cmd":parms.cmd, "user":user};
 			}
 		}
+
+		ret = JSON.stringify(ret);
+		response.writeHead(200, {
+			"Content-Type":"text/json",
+			"Content-Length":ret.length
+		});
+		response.write(ret);
 		return response.end();
 	}
 	else
