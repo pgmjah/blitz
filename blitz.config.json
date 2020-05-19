@@ -1,0 +1,22 @@
+{
+	"server":
+	{
+	},
+	"webApp":
+	{
+		"port":8000,
+		"webRoot":{"alias":"", "dir":"C:/dev"},
+		"maps":
+		[
+			{"alias":"3rdparty_resources", "dir":"C:/dev/wf/3rdparty_resources/src/main/resources/META-INF/resources/3rdparty_resources"},
+			{"alias":"bootstrap", "dir":"C:/dev/wf/3rdparty_resources/src/main/resources/META-INF/resources/bootstrap"},
+			{"alias":"homepage", "dir":"C:/dev/wf/ibxtools/webfocus-webjars-ibxtools/src/main/resources/META-INF/resources/homepage"},
+			{"alias":"ibx", "dir":"C:/dev/wf/ibx/src/main/resources/META-INF/resources/ibx"},
+			{"alias":"ibx_testing", "dir":"C:/dev/wf/ibx_testing/src/test/resources/META-INF/resources/ibx/testing"},
+			{"alias":"ibxtools", "dir":"C:/dev/wf/ibxtools/webfocus-webjars-ibxtools/src/main/resources/META-INF/resources/ibxtools"},
+			{"alias":"caster", "dir":"C:/dev/wf/ibxtools/webfocus-webjars-ibxcaster/src/main/resources/META-INF/resources/ibxcaster"},
+			{"alias":"intl", "dir":"C:/dev/wf/intl/src/main/resources/com/ibi/intl"}
+		]
+	}
+	
+}

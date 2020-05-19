@@ -1,0 +1,35 @@
+{
+	"version": "0.0.1",
+	"publisher": "pgmjah",
+	"name": "pgmjah-blitz",
+	"displayName": "Blitz",
+	"description": "Simple timer game",
+	"author": {
+		"name": "pgmjah",
+		"email": "pgmjah@gmail.com"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pgmjah/tserver.git"
+	},
+	"keywords": [
+		"Game",
+		"Server"
+	],
+	"main": "blitz.js",
+	"bin": {
+		"blitz": "blitz.js"
+	},
+	"files": [
+		"blitz.js",
+		"cycle.node.proc.js",
+		"args.js"
+	],
+	"scripts": {
+		"start": "node blitz.js"
+	},
+	"dependencies": {
+		"uuid": "^8.0.0"
+	}
+}
