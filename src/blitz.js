@@ -183,45 +183,24 @@ _p._handleInput = function(data)
 	}
 };
 
-_p.users = {};
 _p._onRequest = function(request, response)
 {
-	var urlInfo = urls.parse(request.url, true);
-	var query = urlInfo.query;
+	const urlInfo = urls.parse(request.url, true);
+	const parms = urlInfo.query;
 
-	if((urlInfo.pathname.search("/proxy/load") == 0) && query.uri)
+	if((urlInfo.pathname.search("/proxy/load") == 0) && parms.uri)
 		this.loadProxy(query.uri, request, response);
+	else
 	if((urlInfo.pathname.search('/blitz') == 0))
 	{
-		let ret = {"code":-1000};
-		const url = urls.parse(request.url);
-		const  parms = qs.parse(url.query);
-		if(parms.cmd == 'adduser')
-		{
-			const user = this.users[parms.username.toLowerCase()];
-			if(user)
-				ret = {"status":-1001, "msg":"User already exists", "cmd":parms.cmd, "user":user};
-			else
-			{
-				const user = {username:parms.username, sesid:uuidv4()};
-				this.users[parms.username.toLowerCase()] = user;
-				ret = {"status":1000, "msg":"User added", "cmd":parms.cmd, "user":user}
-			}
-		}
+		let payload = null;
+		if((urlInfo.pathname.search('/blitz/user/add') == 0))
+			payload = this.addUser(parms);
 		else
-		if(parms.cmd == 'removeuser')
-		{
-			const user = this.users[parms.username.toLowerCase()];
-			if(!user || user.sesid != parms.sesid)
-				ret = {"status":-1002, "msg":"User not found, or not authorized.", "cmd":parms.cmd, "user":user};
-			else
-			{
-				delete this.users[parms.username];
-				ret = {"status":1000, "msg":"User removed.", "cmd":parms.cmd, "user":user};
-			}
-		}
+		if((urlInfo.pathname.search('/blitz/user/remove') == 0))
+			payload = this.removeUser(parms);
 
-		ret = JSON.stringify(ret);
+		ret = payload ? JSON.stringify(payload) : `Error processing command ${parms.cmd}`;
 		response.writeHead(200, {
 			"Content-Type":"text/json",
 			"Content-Length":ret.length
@@ -231,6 +210,35 @@ _p._onRequest = function(request, response)
 	}
 	else
 		this.loadPage(urlInfo.pathname, request, response);
+};
+
+_p.users = {};
+_p.addUser = function(parms)
+{
+	let ret = {};
+	const user = this.users[parms.username.toLowerCase()];
+	if(user)
+		ret = {"status":-1001, "msg":"User already exists", "cmd":parms.cmd, "user":user};
+	else
+	{
+		const user = {username:parms.username, sesid:uuidv4()};
+		this.users[parms.username.toLowerCase()] = user;
+		ret = {"status":1000, "msg":"User added", "cmd":parms.cmd, "user":user}
+	}
+	return ret;
+};
+_p.removeUser = function(parms)
+{
+	let ret = {};
+	const user = this.users[parms.username.toLowerCase()];
+	if(!user || user.sesid != parms.sesid)
+		ret = {"status":-1002, "msg":"User not found, or not authorized.", "cmd":parms.cmd, "user":user};
+	else
+	{
+		delete this.users[parms.username];
+		ret = {"status":1000, "msg":"User removed.", "cmd":parms.cmd, "user":user};
+	}
+	return ret;
 };
 
 _p.loadProxy = function(proxyUrl, srvRequest, srvResponse)
