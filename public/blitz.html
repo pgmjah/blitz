@@ -3,7 +3,7 @@
 <head>
 	<meta charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>ibx/React App</title>
+	<title>Happy Hour Blitz!</title>
 
 	<script type='module' defer='true'>
 		const BlitzServer = {
@@ -11,10 +11,28 @@
 			{
 				SUCCESS:1000,
 				ERR_USR_EXISTS:-1001,
-				ERR_USR_NO_ACCESS:-1002
+				ERR_USR_NO_ACCESS:-1002,
+				ERR_NOT_SIGNED_IN:-1003,
+				ERR_ALREADY_SUBMITTED:-1004,
+				ERR_USR_NO_NAME:-1005
 			}
 		};
 		let userInfo = null;
+
+		document.querySelector('.buzzer-button').addEventListener('click', async (e)=>
+		{
+			const username = userInfo ? userInfo.username : document.querySelector('.user-name').value;
+			const turnid = userInfo ? userInfo.turnid : '';
+			var ret = await fetch(`/blitz/buzzIn?username=${username}&turnid=${turnid}`);
+			userInfo = await ret.json();
+			
+			console.log(userInfo);
+			if(userInfo.status !== BlitzServer.STATUS.SUCCESS){
+				alert(`${userInfo.msg} (${userInfo.status})`);
+				userInfo = (userInfo.status === BlitzServer.STATUS.ERR_ALREADY_SUBMITTED) ? null : userInfo;
+			}
+
+		});
 	</script>
 	<style type='text/css'>
 		html, body{
@@ -34,6 +52,15 @@
 			box-sizing: border-box;
 			padding:.25em;
 			box-sizing:border-box;
+			background-color: black;
+		}
+		.banner{
+			font-size:1.5em;
+			align-self:center;
+			font-style:italic;
+			font-weight:bold;
+			margin:.25em;
+			color:gray;
 		}
 		.info-box{
 			display:flex;
@@ -44,6 +71,7 @@
 			border:2px solid purple;
 		}
 		.info-box > *{
+			font-size:inherit;
 			margin:0 .25em 0 .25em;
 		}
 		.info-box > input{
@@ -65,24 +93,38 @@
 			font-size:2em;
 			margin-top:.25em;
 		}
+		.buzzer-message{
+			text-align: center;
+		}
 		.buzzer-button{
-			font-size:3em;
+			width:250px;
+			height:250px;
+			font-size:2em;
 			margin-top:24px;
+			background-color: maroon;
+			border:8px solid red;
+			border-radius: 50%;
+		}
+		.buzzer-button:active{
+			background-color:red;
+			border-color:maroon;
+		}
+		.buzzer-button:hover{
+			border-color: goldenrod;
 		}
 	</style>
 </head>
 <body >
 	<div class='main-box'>
+		<div class='banner'>It's Time To Get Blitzed!</div>
 		<div class='info-box'>
 			<label for='userName'>Username:</label>
 			<input tabindex='0' id='userName' class='user-name' type='text' placeholder='BlitzBoss'>
-			<label for='emailAddress'>Email:</label>
-			<input tabindex='0' id='emailAddress' class='email-address' type='text' placeholder='blitz_boss@ibi.conm'/>
 		</div>
 
 		<div class='content-box'>
-			<div>Press The Button As Fast As You Can!</div>
-			<button tabindex='0' class='buzzer-button'>Press Me!</button>
+			<div class='buzzer-message'>When you know the answer, press the button as fast as you can!</div>
+			<button tabindex='0' class='buzzer-button'>Buzz In!</button>
 		</div>
 	</div>
 </html>

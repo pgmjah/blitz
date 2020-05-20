@@ -45,7 +45,6 @@ function BlitzServer(cfgFilename)
 		
 	}, this._config);
 
-
 	process.stdin.on("data", this._handleInput.bind(this));
 	this.on("request", this._onRequest.bind(this));
 	this._openLog(args.log_file, true);
@@ -187,7 +186,10 @@ BlitzServer.STATUS =
 {
 	SUCCESS:1000,
 	ERR_USR_EXISTS:-1001,
-	ERR_USR_NO_ACCESS:-1002
+	ERR_USR_NO_ACCESS:-1002,
+	ERR_NOT_SIGNED_IN:-1003,
+	ERR_ALREADY_SUBMITTED:-1004,
+	ERR_USR_NO_NAME:-1005
 }
 
 _p._onRequest = function(request, response)
@@ -202,13 +204,9 @@ _p._onRequest = function(request, response)
 	{
 		let payload = null;
 		if(urlInfo.pathname === '/blitz')
-			return this.loadPage('/public/index.html', request, response);
-		else
-		if((urlInfo.pathname.search('/blitz/user/add') == 0))
-			payload = this.addUser(parms);
-		else
-		if((urlInfo.pathname.search('/blitz/user/remove') == 0))
-			payload = this.removeUser(parms);
+			return this.loadPage('/public/blitz.html', request, response);
+		else if(-1 != urlInfo.pathname.search('/blitz/buzzIn'))
+			payload = this.buzzIn(parms);
 
 		ret = payload ? JSON.stringify(payload) : `Error processing command ${parms.cmd}`;
 		response.writeHead(200, {
@@ -222,34 +220,22 @@ _p._onRequest = function(request, response)
 		this.loadPage(urlInfo.pathname, request, response);
 };
 
-_p.users = {};
-_p.addUser = function(parms)
+_p.currentTurn = [];
+_p.buzzIn = function(parms)
 {
 	let ret = {};
-	const email = this.users[parms.email.toLowerCase()];
-	if(email)
-		ret = {"status":BlitzServer.STATUS.ERR_USR_EXISTS, "msg":"User already exists", "user":parms.user, "email":email};
+	let {username, turnid} = parms;
+
+	if(!username)
+		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_NAME, "msg":"No username specified.", "username":username};
+	else if(turnid)
+		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
-		const user = {username:parms.username, email:email, sesid:uuidv4()};
-		this.users[parms.email.toLowerCase()] = user;
-		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"User added", "user":user, "email":email}
+		this.currentTurn.push(username);
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":uuidv4(), "timestamp":new Date()};
 	}
-	ret.cmd = 'addUser';
-	return ret;
-};
-_p.removeUser = function(parms)
-{
-	let ret = {};
-	const user = this.users[parms.username.toLowerCase()];
-	if(!user || user.sesid != parms.sesid)
-		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_ACCESS, "msg":"User not found, or not authorized.", "user":user};
-	else
-	{
-		delete this.users[parms.username];
-		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"User removed.", "user":user};
-	}
-	ret.cmd = 'removeUser';
+	ret.cmd = 'buzzin';
 	return ret;
 };
 
