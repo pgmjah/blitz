@@ -31,6 +31,12 @@
 				alert(`${userInfo.msg} (${userInfo.status})`);
 				userInfo = (userInfo.status === BlitzServer.STATUS.ERR_ALREADY_SUBMITTED) ? null : userInfo;
 			}
+			else{
+				let el = document.querySelector('.status-message');
+				el.textContent = `Buzzed at ${userInfo.timestamp}`;
+				el.classList.remove('status-message-hidden');
+				el.classList.add('status-message-hidden');
+			}
 
 		});
 	</script>
@@ -112,6 +118,16 @@
 		.buzzer-button:hover{
 			border-color: goldenrod;
 		}
+		.status-message{
+			margin-top:24px;
+			font-size:.5em;
+			font-weight:400;
+			color:silver;
+		}
+		.status-message-hidden{
+			opacity:0;
+			transition: opacity 7s;
+		}
 	</style>
 </head>
 <body >
@@ -125,6 +141,7 @@
 		<div class='content-box'>
 			<div class='buzzer-message'>When you know the answer, press the button as fast as you can!</div>
 			<button tabindex='0' class='buzzer-button'>Buzz In!</button>
+			<div class='status-message'></div>
 		</div>
 	</div>
 </html>
