@@ -13,7 +13,7 @@ const readline = require("readline");
 const args = require("./args.js");
 const { v4: uuidv4 } = require('uuid');
 
-function TestServer(cfgFilename)
+function BlitzServer(cfgFilename)
 {
 	http.Server.call(this);
 
@@ -29,7 +29,7 @@ function TestServer(cfgFilename)
 		console.log(cfgFilename ? `Server: error parsing config file: ${cfgFilename} (${ex.message})` : `Server: No config specified.`)
 	}
 
-	this._config = TestServer.extend(
+	this._config = BlitzServer.extend(
 	{
 		"server":
 		{
@@ -52,10 +52,10 @@ function TestServer(cfgFilename)
 	this.listen(this._config.webApp.port, this._onListening.bind(this));
 	this.on("close", this._onServerClosed.bind(this));
 }
-util.inherits(TestServer, http.Server);
-var _p = TestServer.prototype;
+util.inherits(BlitzServer, http.Server);
+var _p = BlitzServer.prototype;
 
-TestServer.CONTENT_TYPES =
+BlitzServer.CONTENT_TYPES =
 {
 	".gz":"application/x-gzip",
 	".txt":"text/plain",
@@ -71,8 +71,8 @@ TestServer.CONTENT_TYPES =
 	".woff2":"font/woff2",
 	".ttf":"font/truetype"
 };
-TestServer.getContentType = function(filePath){return (TestServer.CONTENT_TYPES[filePath.substring(filePath.lastIndexOf(".")).trim()] || TestServer.CONTENT_TYPES[".txt"]);};
-TestServer.fileExists = function(filepath)
+BlitzServer.getContentType = function(filePath){return (BlitzServer.CONTENT_TYPES[filePath.substring(filePath.lastIndexOf(".")).trim()] || BlitzServer.CONTENT_TYPES[".txt"]);};
+BlitzServer.fileExists = function(filepath)
 {
 	let fStat = null;
 	try
@@ -84,7 +84,7 @@ TestServer.fileExists = function(filepath)
 	}
 	return fStat;
 }
-TestServer.extend = function extend()
+BlitzServer.extend = function extend()
 {
 	var arObjects = Array.from(arguments);
 	var oRet = arObjects.shift();
@@ -95,7 +95,7 @@ TestServer.extend = function extend()
 		{
 			var member = oSrc[key];
 			if(oSrc.hasOwnProperty(key))
-				oRet[key] = ((member instanceof Object) && (typeof(member) != "function") && !(member instanceof Array)) ? TestServer.extend({}, oRet[key], member) : member;
+				oRet[key] = ((member instanceof Object) && (typeof(member) != "function") && !(member instanceof Array)) ? BlitzServer.extend({}, oRet[key], member) : member;
 		}
 	}
 	return oRet;
@@ -115,7 +115,7 @@ _p._onListening = function()
 		this.log(util.format("Server: Map - %s => %s", map.alias, map.dir));
 	}
 	this.log(util.format("Server: ***** Listening at %s on port %s *****", getLocalIPAddress(), address.port))
-	process.title = util.format("TestServer: listening on port %s", address.port);
+	process.title = util.format("BlitzServer: listening on port %s", address.port);
 };
 _p._onServerClosed = function()
 {
@@ -183,6 +183,13 @@ _p._handleInput = function(data)
 	}
 };
 
+BlitzServer.STATUS = 
+{
+	SUCCESS:1000,
+	ERR_USR_EXISTS:-1001,
+	ERR_USR_NO_ACCESS:-1002
+}
+
 _p._onRequest = function(request, response)
 {
 	const urlInfo = urls.parse(request.url, true);
@@ -219,15 +226,16 @@ _p.users = {};
 _p.addUser = function(parms)
 {
 	let ret = {};
-	const user = this.users[parms.username.toLowerCase()];
-	if(user)
-		ret = {"status":-1001, "msg":"User already exists", "cmd":parms.cmd, "user":user};
+	const email = this.users[parms.email.toLowerCase()];
+	if(email)
+		ret = {"status":BlitzServer.STATUS.ERR_USR_EXISTS, "msg":"User already exists", "user":parms.user, "email":email};
 	else
 	{
-		const user = {username:parms.username, sesid:uuidv4()};
-		this.users[parms.username.toLowerCase()] = user;
-		ret = {"status":1000, "msg":"User added", "cmd":parms.cmd, "user":user}
+		const user = {username:parms.username, email:email, sesid:uuidv4()};
+		this.users[parms.email.toLowerCase()] = user;
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"User added", "user":user, "email":email}
 	}
+	ret.cmd = 'addUser';
 	return ret;
 };
 _p.removeUser = function(parms)
@@ -235,12 +243,13 @@ _p.removeUser = function(parms)
 	let ret = {};
 	const user = this.users[parms.username.toLowerCase()];
 	if(!user || user.sesid != parms.sesid)
-		ret = {"status":-1002, "msg":"User not found, or not authorized.", "cmd":parms.cmd, "user":user};
+		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_ACCESS, "msg":"User not found, or not authorized.", "user":user};
 	else
 	{
 		delete this.users[parms.username];
-		ret = {"status":1000, "msg":"User removed.", "cmd":parms.cmd, "user":user};
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"User removed.", "user":user};
 	}
+	ret.cmd = 'removeUser';
 	return ret;
 };
 
@@ -292,11 +301,11 @@ _p.loadPage = function(srvPath, srvRequest, srvResponse)
 	this.log("Server: Requesting File: " + srvPath);
 
 	//set the headers for the content type.
-	let headers = {"content-type":TestServer.getContentType(filePath)};
+	let headers = {"content-type":BlitzServer.getContentType(filePath)};
 
 	//see if there's a gzip file to return instead of raw file.
 	let gzFilePath = `${filePath}.gz`;
-	if(TestServer.fileExists(gzFilePath))
+	if(BlitzServer.fileExists(gzFilePath))
 	{
 		headers["Content-Encoding"] = "gzip";//add gzip header.
 		filePath = gzFilePath;
@@ -336,8 +345,8 @@ function getLocalIPAddress()
 	return ipAddress;
 }
 
-//Create the instance of the TestServer if running standalone.
+//Create the instance of the BlitzServer if running standalone.
 if(!module.parent)
-	var ts = new TestServer(process.argv[2]);
+	var ts = new BlitzServer(process.argv[2]);
 
-module.exports = {TestServer};
+module.exports = {BlitzServer};

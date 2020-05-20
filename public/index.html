@@ -7,18 +7,31 @@
 
 	<script type='text/javascript' src='/public/ibx/resources/ibx.js'></script>
 	<script type='module' defer='true'>
+		const BlitzServer = {
+			STATUS: 
+			{
+				SUCCESS:1000,
+				ERR_USR_EXISTS:-1001,
+				ERR_USR_NO_ACCESS:-1002
+			}
+		};
 		let userInfo = null;
 		ibx(function()
 		{
-			$('.sign-on-popup').ibxWidget('open').focus();
+			const popup = $('.sign-on-popup').ibxWidget('open').focus();
 			$('.sign-on-popup .ok-btn').on('click', async (e)=>
 			{
-				const username = $('.sign-on-popup .user-name').ibxWidget('value');
-				const fetchInfo = await fetch(`/blitz/user/add?username=${username}`);
+				const username = $('.sign-on-popup .username-field').ibxWidget('value');
+				const email = $('.sign-on-popup .email-field').ibxWidget('value');
+				const fetchInfo = await fetch(`/blitz/user/add?username=${username}&email=${email}`);
 				userInfo = await fetchInfo.json(); 
-				if(userInfo.status === 1000)
-					$('.sign-on-popup').ibxWidget('close');
-				initGame(userInfo);
+				if(userInfo.status === BlitzServer.STATUS.SUCCESS)
+				{
+					popup.ibxWidget('close');
+					initGame(userInfo);
+				}
+				else if (userInfo.status === BlitzServer.STATUS.ERR_USR_EXISTS)
+					alert(`The email "${email}" is already in use.  Try again!`)
 			});
 
 			function initGame(userInfo)
@@ -57,7 +70,8 @@
 
 	<div tabindex='0' class='sign-on-popup' data-ibx-type='ibxPopup' data-ibxp-auto-close='false'>
 		<div tabindex='0' class='content-box' data-ibx-type='ibxVBox' data-ibxp-align='stretch' data-ibxp-justify='center'>
-			<div tabindex='0' class='user-name ibx-default-focused' data-ibx-type='ibxTextField' data-ibxp-placeholder='Player Name'></div>
+			<div tabindex='0' class='username-field ibx-default-focused' data-ibx-type='ibxTextField' data-ibxp-placeholder='Player Name'></div>
+			<div tabindex='0' class='email-field' data-ibx-type='ibxTextField' data-ibxp-placeholder='Player Email'></div>
 			<div tabindex='0' class='ok-btn' data-ibx-type='ibxButton'>Sign in</div>
 		</div>
 	</div>
