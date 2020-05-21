@@ -3,7 +3,7 @@
 <head>
 	<meta charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-	<title>Happy Hour Blitz!</title>
+	<title>ADMIN - Happy Hour Blitz!</title>
 
 	<script type='module' defer='true'>
 		const BlitzServer = {
@@ -17,27 +17,18 @@
 				ERR_USR_NO_NAME:-1005
 			}
 		};
-		let userInfo = null;
 
-		document.querySelector('.buzzer-button').addEventListener('click', async (e)=>
+		document.querySelector('.reset-turn').addEventListener('click', async (e)=>
 		{
-			const username = userInfo ? userInfo.username : document.querySelector('.user-name').value;
-			const turnid = userInfo ? userInfo.turnid : '';
-			const ret = await fetch(`/blitz/buzzIn?username=${username}&turnid=${turnid}`);
-			userInfo = await ret.json();
+			const ret = await fetch(`/blitz/turn/reset`);
+			const resetInfo = await ret.json();
 			
-			console.log(userInfo);
-			if(userInfo.status !== BlitzServer.STATUS.SUCCESS){
-				alert(`${userInfo.msg} (${userInfo.status})`);
-				userInfo = (userInfo.status === BlitzServer.STATUS.ERR_ALREADY_SUBMITTED) ? null : userInfo;
+			console.log(resetInfo);
+			if(resetInfo.status !== BlitzServer.STATUS.SUCCESS){
+				alert(`${resetInfo.msg} (${resetInfo.status})`);
 			}
-			else{
-				let el = document.querySelector('.status-message');
-				el.textContent = `Buzzed at ${userInfo.timestamp}`;
-				el.classList.remove('status-message-hidden');
-				el.classList.add('status-message-hidden');
-			}
-
+			else
+				document.querySelectorAll('.turn-status').textContent = '';
 		});
 	</script>
 	<style type='text/css'>
@@ -132,16 +123,14 @@
 </head>
 <body >
 	<div class='main-box'>
-		<div class='banner'>It's Time To Get Blitzed!</div>
+		<div class='banner'>ADMIN - It's Time To Get Blitzed!</div>
 		<div class='info-box'>
-			<label for='userName'>Username:</label>
-			<input tabindex='0' id='userName' class='user-name' type='text' placeholder='BlitzBoss'>
+			<button class='reset-turn'>Reset Turn</button>
+			<button class='start-turn'>Start Turn</button>
 		</div>
 
 		<div class='content-box'>
-			<div class='buzzer-message'>When you know the answer, press the button as fast as you can!</div>
-			<button tabindex='0' class='buzzer-button'>Buzz In!</button>
-			<div class='status-message'></div>
+			<div class='turn-status'></div>
 		</div>
 	</div>
 </html>

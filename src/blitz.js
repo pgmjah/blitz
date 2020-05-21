@@ -45,6 +45,8 @@ function BlitzServer(cfgFilename)
 		
 	}, this._config);
 
+	this.currentTurn = [];
+
 	process.stdin.on("data", this._handleInput.bind(this));
 	this.on("request", this._onRequest.bind(this));
 	this._openLog(args.log_file, true);
@@ -205,6 +207,12 @@ _p._onRequest = function(request, response)
 		let payload = null;
 		if(urlInfo.pathname === '/blitz')
 			return this.loadPage('/public/blitz.html', request, response);
+		else if(-1 != urlInfo.pathname.search('/blitz/admin'))
+			return this.loadPage('/public/admin.html', request, response);
+		else if(-1 != urlInfo.pathname.search('/blitz/turn/reset'))
+			payload = this.resetTurn(parms);
+		else if(-1 != urlInfo.pathname.search('/blitz/turn/status'))
+			payload = this.resetTurn(parms);
 		else if(-1 != urlInfo.pathname.search('/blitz/buzzIn'))
 			payload = this.buzzIn(parms);
 
@@ -220,7 +228,13 @@ _p._onRequest = function(request, response)
 		this.loadPage(urlInfo.pathname, request, response);
 };
 
-_p.currentTurn = [];
+_p.currentTurn = null;
+_p.resetTurn = function(parms)
+{
+	this.currentTurn = [];
+	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn reset."};
+};
+
 _p.buzzIn = function(parms)
 {
 	let ret = {};
