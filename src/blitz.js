@@ -187,6 +187,7 @@ _p._handleInput = function(data)
 BlitzServer.STATUS = 
 {
 	SUCCESS:1000,
+	ERR_UNKNOWN: -1000,
 	ERR_USR_EXISTS:-1001,
 	ERR_USR_NO_ACCESS:-1002,
 	ERR_NOT_SIGNED_IN:-1003,
@@ -209,14 +210,18 @@ _p._onRequest = function(request, response)
 			return this.loadPage('/public/blitz.html', request, response);
 		else if(-1 != urlInfo.pathname.search('/blitz/admin'))
 			return this.loadPage('/public/admin.html', request, response);
+		else if(-1 != urlInfo.pathname.search('/blitz/turn/start'))
+			payload = this.turnStart(parms);
+		else if(-1 != urlInfo.pathname.search('/blitz/turn/stop'))
+			payload = this.turnStop(parms);
 		else if(-1 != urlInfo.pathname.search('/blitz/turn/reset'))
-			payload = this.resetTurn(parms);
+			payload = this.turnReset(parms);
 		else if(-1 != urlInfo.pathname.search('/blitz/turn/status'))
-			payload = this.resetTurn(parms);
+			payload = this.turnStatus(parms);
 		else if(-1 != urlInfo.pathname.search('/blitz/buzzIn'))
 			payload = this.buzzIn(parms);
 
-		ret = payload ? JSON.stringify(payload) : `Error processing command ${parms.cmd}`;
+		ret = JSON.stringify(payload ? payload :{status:BlitzServer.STATUS.ERR_UNKNOWN, msg:`Error processing command ${urlInfo.pathname}`});
 		response.writeHead(200, {
 			"Content-Type":"text/json",
 			"Content-Length":ret.length
@@ -229,7 +234,19 @@ _p._onRequest = function(request, response)
 };
 
 _p.currentTurn = null;
-_p.resetTurn = function(parms)
+_p.turnStart = function()
+{
+
+};
+_p.turnStop = function()
+{
+
+};
+_p.turnReset = function()
+{
+
+};
+_p.turnReset = function(parms)
 {
 	this.currentTurn = [];
 	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn reset."};

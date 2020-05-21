@@ -6,29 +6,48 @@
 	<title>ADMIN - Happy Hour Blitz!</title>
 
 	<script type='module' defer='true'>
-		const BlitzServer = {
-			STATUS: 
-			{
-				SUCCESS:1000,
-				ERR_USR_EXISTS:-1001,
-				ERR_USR_NO_ACCESS:-1002,
-				ERR_NOT_SIGNED_IN:-1003,
-				ERR_ALREADY_SUBMITTED:-1004,
-				ERR_USR_NO_NAME:-1005
-			}
-		};
+		function Blitz()
+		{			
+			this.inTurn = false;
+			this.turnTimed = false;
+			this.turnLength = 5;
+			this.turnTimer = null;
 
-		document.querySelector('.reset-turn').addEventListener('click', async (e)=>
-		{
-			const ret = await fetch(`/blitz/turn/reset`);
-			const resetInfo = await ret.json();
-			
-			console.log(resetInfo);
-			if(resetInfo.status !== BlitzServer.STATUS.SUCCESS){
-				alert(`${resetInfo.msg} (${resetInfo.status})`);
+			this.exec = async function (cmd, parms)
+			{
+				let uriCmd = `blitz/${Blitz.cmdTable[cmd]}${parms ? '?' : ''}`;
+				parms ? Object.keys(parms).map((key) => uriCmd += `${key}=${parms[key]}&`) : null;
+
+				let res = await fetch(uriCmd);
+				res = await res.json();
+				console.log(res);
+				if(res.status !== Blitz.STATUS.SUCCESS)
+					alert(`${res.msg} (${res.status})`);
+				return res;
 			}
-			else
-				document.querySelectorAll('.turn-status').textContent = '';
+		}
+		Blitz.cmdTable = {
+			startTurn:'/turn/start',
+			stopTurn:'/turn/stop',
+			resetTurn:'/turn/reset'
+		};
+		Blitz.STATUS = {
+			SUCCESS:1000,
+			ERR_USR_EXISTS:-1001,
+			ERR_USR_NO_ACCESS:-1002,
+			ERR_NOT_SIGNED_IN:-1003,
+			ERR_ALREADY_SUBMITTED:-1004,
+			ERR_USR_NO_NAME:-1005
+		};
+		const blitz = new Blitz();
+
+		document.querySelector('.start-stop-turn').addEventListener('click', (e)=>
+		{
+			blitz.exec('startTurn', {turnTimed:true, turnLength:5});
+		});
+
+		document.querySelector('.reset-turn').addEventListener('click', (e)=>
+		{
 		});
 	</script>
 	<style type='text/css'>
@@ -72,7 +91,7 @@
 			margin:0 .25em 0 .25em;
 		}
 		.info-box > input{
-			flex: 1 1 auto;
+			width:5em;
 			min-width:2em;
 			font-size:inherit;
 		}
@@ -125,8 +144,13 @@
 	<div class='main-box'>
 		<div class='banner'>ADMIN - It's Time To Get Blitzed!</div>
 		<div class='info-box'>
-			<button class='reset-turn'>Reset Turn</button>
-			<button class='start-turn'>Start Turn</button>
+			<button tabindex='0' class='start-stop-turn'>Start Turn</button>
+			<div>
+				<input tabindex='0' id='turnTimed' class='turn-timed' type='checkbox'/>
+				<label for='turnTimed'>Timed</label>
+			</div>
+			<input type='text' placeholder='5 seconds'>
+			<button tabindex='0' class='reset-turn'>Reset Turn</button>
 		</div>
 
 		<div class='content-box'>
