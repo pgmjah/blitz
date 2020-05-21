@@ -29,7 +29,5 @@
 	"scripts": {
 		"start": "node blitz.js"
 	},
-	"dependencies": {
-		"uuid": "^8.0.0"
-	}
+	"dependencies": {}
 }

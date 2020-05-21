@@ -12,7 +12,6 @@ const util = require("util");
 const timers = require("timers");
 const readline = require("readline");
 const args = require("./args.js");
-const { v4: uuidv4 } = require('uuid');
 
 function BlitzServer(cfgFilename)
 {
@@ -252,15 +251,16 @@ _p._onRequest = function(request, response)
 		this.loadPage(urlInfo.pathname, request, response);
 };
 
+_p.turnCounter = 0;
 _p.turnRunning = false;
 _p.turnUsers = null;
-_p.turnid = '';
+_p.turnid = -1;
 _p.turnTimeout = null;
 _p.turnStart = function(parms)
 {
 	this.turnReset();
 	this.turnRunning = true;
-	this.turnid = uuidv4();
+	this.turnid = ++this.turnCounter;
 	this.turnTimer = setTimeout(()=>{
 		this.turnStop();
 	}, parms.turntimed ? parms.turnlength * 1000 : 360000);
@@ -277,7 +277,7 @@ _p.turnReset = function(parms)
 {
 	this.turnStop();
 	this.turnUsers = [];
-	this.turnid = '';
+	this.turnid = -1;
 	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn reset."};
 };
 
@@ -290,7 +290,7 @@ _p.buzzIn = function(parms)
 	else
 	if(!username)
 		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_NAME, "msg":"No username specified.", "username":username};
-	else if(turnid && (turnid === this.turnid))
+	else if(turnid === this.turnid)
 		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
