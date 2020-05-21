@@ -67,7 +67,7 @@
 			
 			let statusHTML = '';
 			turnStatus.users.map((user, idx)=>{
-				statusHTML += `<div class='blitz-user'>${user.username} Time: ${user.time}</div>`;
+				statusHTML += `<div class='blitz-user'>${user.username}  (${user.time}ms)</div>`;
 			});
 			elStatus.innerHTML = statusHTML;
 		}, 100);
