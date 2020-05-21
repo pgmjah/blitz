@@ -1,12 +1,17 @@
 # blitz README
+Blitz is a simple web server that let's you play a game where the admin can ask question, and the users can press their
+button to respond the fastest.
 
 ## Install/Run
 * Global - npm install -g pgmjah-blitz will install as a global node program.  To run: blitz config.json
 * Local - npm install pgmjah-blitz. To run node blitz.js config.json
 
-***Note: If you run tserver without a config file, the server will use the current working directory (cwd) as the app root, and listen on port 8000.***
+## Blitz
+* To run the game client for Blitz go to: http://server:8000/blitz
+* To run the admin for Blitz go to: http://server:8000/blitz/admin
 
 ## Config
+***Note: If you run tserver without a config file, the server will use the current working directory (cwd) as the app root, and listen on port 8000.***
 JSON file to configure the server.
 ```javascript
 {
@@ -38,11 +43,15 @@ JSON file to configure the server.
 	* alias - the name of directory you want to use in the url.
 	* dir - the physical directory mapped to the alias.
 
-## Commands
+## Commands - command line
 * cls - Clear the screen.
 * clog - Clear the current log file.
 * log - pipe the current log file to the screen.
 
 ## Changelog
+
+* 0.0. - Fixed resolving root server context when packaged for standalone running.
+
+* 0.0.2 - Fixed package.json
 
 * 0.0.1 - Initial commit.

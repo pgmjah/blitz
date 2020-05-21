@@ -1,5 +1,5 @@
 {
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"publisher": "pgmjah",
 	"name": "pgmjah-blitz",
 	"displayName": "Blitz",
@@ -17,17 +17,18 @@
 		"Game",
 		"Server"
 	],
-	"main": "blitz.js",
+	"main": "./src/blitz.js",
 	"bin": {
-		"blitz": "blitz.js"
+		"blitz": "./src/blitz.js"
 	},
 	"files": [
-		"blitz.js",
-		"cycle.node.proc.js",
-		"args.js"
+		"//src/*",
+		"//public/blitz.html",
+		"//public/admin.html",
+		"blitz.config.json"
 	],
 	"scripts": {
-		"start": "node blitz.js"
+		"start": "node ./src/clsblitz.js"
 	},
 	"dependencies": {}
 }

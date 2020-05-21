@@ -39,7 +39,7 @@ function BlitzServer(cfgFilename)
 		"webApp":
 		{
 			"port":8000,
-			"webRoot":{"alias":"", "dir":process.cwd()},
+			"webRoot":{"alias":"", "dir":`${paths.parse(process.argv[1]).dir}/..`},
 			"maps":[]
 		}
 		
