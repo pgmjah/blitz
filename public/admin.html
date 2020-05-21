@@ -98,48 +98,23 @@
 			min-width:2em;
 			font-size:inherit;
 		}
-		.content-box
-		{
+		.content-box{
 			flex:1 1 auto;
 			display:flex;
 			flex-direction:column;
-			align-items:center;
-			justify-content:center;
+			align-items:stretch;
 			border:4px solid purple;
 			background-color: black;
 			color:white;
-			font-weight: 900;
-			font-size:2em;
 			margin-top:.25em;
+			padding:.25em;
 		}
-		.buzzer-message{
-			text-align: center;
+		.turn-status-label{
+			margin-bottom:.25em;
 		}
-		.buzzer-button{
-			width:250px;
-			height:250px;
-			font-size:2em;
-			margin-top:24px;
-			background-color: maroon;
-			border:8px solid red;
-			border-radius: 50%;
-		}
-		.buzzer-button:active{
-			background-color:red;
-			border-color:maroon;
-		}
-		.buzzer-button:hover{
-			border-color: goldenrod;
-		}
-		.status-message{
-			margin-top:24px;
-			font-size:.5em;
-			font-weight:400;
-			color:silver;
-		}
-		.status-message-hidden{
-			opacity:0;
-			transition: opacity 7s;
+		.turn-status{
+			flex:1 1 auto;
+			border:1px solid gray;
 		}
 	</style>
 </head>
@@ -157,6 +132,7 @@
 		</div>
 
 		<div class='content-box'>
+			<div class='turn-status-label'>Turn status...</div>
 			<div class='turn-status'></div>
 		</div>
 	</div>
