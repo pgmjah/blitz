@@ -255,6 +255,7 @@ _p.turnCounter = 0;
 _p.turnRunning = false;
 _p.turnUsers = null;
 _p.turnid = -1;
+_p.turnTimed = false;
 _p.turnTimeout = null;
 _p.turnTimeStart = null;
 _p.turnStart = function(parms)
@@ -263,9 +264,10 @@ _p.turnStart = function(parms)
 	this.turnRunning = true;
 	this.turnid = ++this.turnCounter;
 	this.turnTimeStart = new Date();
+	this.turnTimed = parms.turntimed;
 	this.turnTimer = setTimeout(()=>{
 		this.turnStop();
-	}, parms.turntimed ? parms.turnlength * 1000 : 360000);
+	}, this.turnTimed ? parms.turnlength * 1000 : 360000);
 	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn started.", turnid:this.turnid};
 };
 _p.turnStop = function(parms)
@@ -285,7 +287,8 @@ _p.turnReset = function(parms)
 _p.turnStatus = function(parm)
 {
 	const users = [...this.turnUsers];
-	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Users submissions.", "users":users, "turnid":this.turnid, "turnRunning":this.turnRunning};
+	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn status.", "users":users,
+		"turnid":this.turnid, "turnrunning":this.turnRunning, "turntimed":this.turnTimed, "timeelapsed":((new Date() - this.turnTimeStart))};
 };
 _p.buzzIn = function(parms)
 {

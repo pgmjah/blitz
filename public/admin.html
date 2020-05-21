@@ -30,7 +30,8 @@
 			startTurn:'turn/start',
 			stopTurn:'turn/stop',
 			resetTurn:'turn/reset',
-			turnStatus:'turn/status'
+			turnStatus:'turn/status',
+			buzzIn:'buzzIn'
 		};
 		Blitz.STATUS = {
 			SUCCESS:1000,
@@ -46,9 +47,10 @@
 
 		window.setInterval(async ()=>
 		{
-			const turnStatus = await blitz.exec('turnStatus');
+			const elTimeElapsed = document.querySelector('.time-elapsed');
 			const elStatus = document.querySelector('.turn-status');
 			const elStartButton = document.querySelector('.start-turn');
+			const turnStatus = await blitz.exec('turnStatus');
 
 			if(turnStatus.status != Blitz.STATUS.SUCCESS){
 				elStatus.textContent = turnStatus.msg;
@@ -56,10 +58,14 @@
 			}
 
 			elStartButton.turnStatus = turnStatus;
-			elStartButton.textContent = turnStatus.turnRunning ? 'Stop Turn' : 'Start Turn';
-			elStatus.innerHTML = '';
+			elStartButton.textContent = turnStatus.turnrunning ? 'Stop Turn' : 'Start Turn';
+			elTimeElapsed.textContent = turnStatus.turntimed ? `Time Elapsed: ${Number(turnStatus.timeelapsed)/1000}` : '';
 
-			var statusHTML = '';
+			if(!turnStatus.turnrunning)
+				return;
+
+			
+			let statusHTML = '';
 			turnStatus.users.map((user, idx)=>{
 				statusHTML += `<div class='blitz-user'>${user.username} Time: ${user.time}</div>`;
 			});
@@ -77,13 +83,15 @@
 			const turnStatus = elStartButton.turnStatus;
 			const turnTimed = document.querySelector('.turn-timed').checked;
 			const turnLength = document.querySelector('.turn-length').value;
-			blitz.exec(turnStatus.turnRunning ? 'stopTurn' : 'startTurn', {turntimed:turnTimed, turnlength: turnLength || 5});
+			blitz.exec(turnStatus.turnrunning ? 'stopTurn' : 'startTurn', {turntimed:turnTimed, turnlength: turnLength || 5});
 		});
 
-		document.querySelector('.reset-turn').addEventListener('click', (e)=>
+		document.querySelector('.test-turn').addEventListener('click', (e)=>
 		{
-			blitz.exec('resetTurn');
+			for(let i = 0; i < 25; ++i)
+				blitz.exec('buzzIn', {username:`Blitz User ${i}`, turnid:''});
 		});
+
 	</script>
 	<style type='text/css'>
 		html, body{
@@ -170,11 +178,11 @@
 				<label for='turnTimed'>Timed</label>
 			</div>
 			<input class='turn-length' type='text' defaultvalue='5' placeholder='5 seconds'>
-			<button tabindex='0' class='reset-turn'>Reset Turn</button>
+			<button tabindex='0' class='test-turn'>Test Turn</button>
 		</div>
 
 		<div class='content-box'>
-			<div class='turn-status-label'>Turn Status:</div>
+			<div class='turn-status-label'><span>Turn Status: </span><span class='time-elapsed'></span></div>
 			<div class='turn-status'></div>
 		</div>
 	</div>
