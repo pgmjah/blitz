@@ -256,11 +256,13 @@ _p.turnRunning = false;
 _p.turnUsers = null;
 _p.turnid = -1;
 _p.turnTimeout = null;
+_p.turnTimeStart = null;
 _p.turnStart = function(parms)
 {
 	this.turnReset();
 	this.turnRunning = true;
 	this.turnid = ++this.turnCounter;
+	this.turnTimeStart = new Date();
 	this.turnTimer = setTimeout(()=>{
 		this.turnStop();
 	}, parms.turntimed ? parms.turnlength * 1000 : 360000);
@@ -280,7 +282,11 @@ _p.turnReset = function(parms)
 	this.turnid = -1;
 	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn reset."};
 };
-
+_p.turnStatus = function(parm)
+{
+	const users = [...this.turnUsers];
+	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Users submissions.", "users":users, "turnid":this.turnid, "turnRunning":this.turnRunning};
+};
 _p.buzzIn = function(parms)
 {
 	let ret = {};
@@ -294,8 +300,8 @@ _p.buzzIn = function(parms)
 		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
-		this.turnUsers.push(username);
-		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "timestamp":new Date()};
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "time":(new Date() - this.turnStart), "timestamp":new Date()};
+		this.turnUsers.push({"username":username, "timestamp":ret.timestamp});
 	}
 	ret.cmd = 'buzzin';
 	return ret;
