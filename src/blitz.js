@@ -9,6 +9,7 @@ const fs = require("fs");
 const paths = require("path");
 const urls = require("url");
 const util = require("util");
+const timers = require("timers");
 const readline = require("readline");
 const args = require("./args.js");
 const { v4: uuidv4 } = require('uuid');
@@ -45,7 +46,7 @@ function BlitzServer(cfgFilename)
 		
 	}, this._config);
 
-	this.currentTurn = [];
+	this.turnUsers = [];
 
 	process.stdin.on("data", this._handleInput.bind(this));
 	this.on("request", this._onRequest.bind(this));
@@ -233,22 +234,26 @@ _p._onRequest = function(request, response)
 		this.loadPage(urlInfo.pathname, request, response);
 };
 
-_p.currentTurn = null;
-_p.turnStart = function()
+_p.turnRunning = false;
+_p.turnUsers = null;
+_p.turnid = '';
+_p.turnTimeout = null;
+_p.turnStart = function(parms)
 {
-
+	this.turnReset();
+	this.turnTimer = setInterval()
 };
-_p.turnStop = function()
+_p.turnStop = function(parms)
 {
-
-};
-_p.turnReset = function()
-{
-
+	if(this.turnTimeout)
+		clearInterval(this.turnTimeout);
+	this.turnRunning = false;
+	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn stopped."};
 };
 _p.turnReset = function(parms)
 {
-	this.currentTurn = [];
+	this.turnStop();
+	this.turnUsers = [];
 	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn reset."};
 };
 
@@ -263,7 +268,7 @@ _p.buzzIn = function(parms)
 		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
-		this.currentTurn.push(username);
+		this.turnUsers.push(username);
 		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":uuidv4(), "timestamp":new Date()};
 	}
 	ret.cmd = 'buzzin';
