@@ -59,7 +59,7 @@
 
 			elStartButton.turnStatus = turnStatus;
 			elStartButton.textContent = turnStatus.turnrunning ? 'Stop Turn' : 'Start Turn';
-			elTimeElapsed.textContent = turnStatus.turntimed ? `Time Elapsed: ${Number(turnStatus.timeelapsed)/1000}` : '';
+			elTimeElapsed.textContent = (turnStatus.turnrunning && turnStatus.turntimed) ? `Time Elapsed: ${Number(turnStatus.timeelapsed)/1000}` : '';
 
 			if(!turnStatus.turnrunning)
 				return;
