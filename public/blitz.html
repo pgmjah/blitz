@@ -10,6 +10,7 @@
 			STATUS: 
 			{
 				SUCCESS:1000,
+				ERR_UNKNOWN: -1000,
 				ERR_USR_EXISTS:-1001,
 				ERR_USR_NO_ACCESS:-1002,
 				ERR_NOT_SIGNED_IN:-1003,
@@ -17,27 +18,24 @@
 				ERR_USR_NO_NAME:-1005
 			}
 		};
-		let userInfo = null;
+		let turnInfo = {username:'', turnid:''};
 
 		document.querySelector('.buzzer-button').addEventListener('click', async (e)=>
 		{
-			const username = userInfo ? userInfo.username : document.querySelector('.user-name').value;
-			const turnid = userInfo ? userInfo.turnid : '';
-			const ret = await fetch(`/blitz/buzzIn?username=${username}&turnid=${turnid}`);
-			userInfo = await ret.json();
+			let res = await fetch(`/blitz/buzzIn?username=${document.querySelector('.user-name').value}&turnid=${turnInfo.turnid}`);
+			res = await res.json();
 			
-			console.log(userInfo);
-			if(userInfo.status !== BlitzServer.STATUS.SUCCESS){
-				alert(`${userInfo.msg} (${userInfo.status})`);
-				userInfo = (userInfo.status === BlitzServer.STATUS.ERR_ALREADY_SUBMITTED) ? null : userInfo;
+			console.log(res);
+			if(res.status !== BlitzServer.STATUS.SUCCESS){
+				alert(`${res.msg} (${res.status})`);
 			}
 			else{
+				turnInfo = {username:res.username, turnid:res.turnid};
 				let el = document.querySelector('.status-message');
-				el.textContent = `Buzzed at ${userInfo.timestamp}`;
+				el.textContent = `Buzzed at ${res.timestamp}`;
 				el.classList.remove('status-message-hidden');
 				el.classList.add('status-message-hidden');
 			}
-
 		});
 	</script>
 	<style type='text/css'>

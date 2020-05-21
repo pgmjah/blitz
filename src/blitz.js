@@ -208,17 +208,17 @@ _p._onRequest = function(request, response)
 		let payload = null;
 		if(urlInfo.pathname === '/blitz')
 			return this.loadPage('/public/blitz.html', request, response);
-		else if(-1 != urlInfo.pathname.search('/blitz/admin'))
+		else if(0 === urlInfo.pathname.search('/blitz/admin'))
 			return this.loadPage('/public/admin.html', request, response);
-		else if(-1 != urlInfo.pathname.search('/blitz/turn/start'))
+		else if(0 === urlInfo.pathname.search('/blitz/turn/start'))
 			payload = this.turnStart(parms);
-		else if(-1 != urlInfo.pathname.search('/blitz/turn/stop'))
+		else if(0 === urlInfo.pathname.search('/blitz/turn/stop'))
 			payload = this.turnStop(parms);
-		else if(-1 != urlInfo.pathname.search('/blitz/turn/reset'))
+		else if(0 === urlInfo.pathname.search('/blitz/turn/reset'))
 			payload = this.turnReset(parms);
-		else if(-1 != urlInfo.pathname.search('/blitz/turn/status'))
+		else if(0 === urlInfo.pathname.search('/blitz/turn/status'))
 			payload = this.turnStatus(parms);
-		else if(-1 != urlInfo.pathname.search('/blitz/buzzIn'))
+		else if(0 === urlInfo.pathname.search('/blitz/buzzIn'))
 			payload = this.buzzIn(parms);
 
 		ret = JSON.stringify(payload ? payload :{status:BlitzServer.STATUS.ERR_UNKNOWN, msg:`Error processing command ${urlInfo.pathname}`});
