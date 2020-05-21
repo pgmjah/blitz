@@ -15,7 +15,7 @@
 
 			this.exec = async function (cmd, parms)
 			{
-				let uriCmd = `blitz/${Blitz.cmdTable[cmd]}${parms ? '?' : ''}`;
+				let uriCmd = `/blitz/${Blitz.cmdTable[cmd]}${parms ? '?' : ''}`;
 				parms ? Object.keys(parms).map((key) => uriCmd += `${key}=${parms[key]}&`) : null;
 
 				let res = await fetch(uriCmd);
@@ -27,9 +27,9 @@
 			}
 		}
 		Blitz.cmdTable = {
-			startTurn:'/turn/start',
-			stopTurn:'/turn/stop',
-			resetTurn:'/turn/reset'
+			startTurn:'turn/start',
+			stopTurn:'turn/stop',
+			resetTurn:'turn/reset'
 		};
 		Blitz.STATUS = {
 			SUCCESS:1000,
@@ -43,7 +43,9 @@
 
 		document.querySelector('.start-stop-turn').addEventListener('click', (e)=>
 		{
-			blitz.exec('startTurn', {turnTimed:true, turnLength:5});
+			const turnTimed = document.querySelector('.turn-timed').checked;
+			const turnLength = document.querySelector('.turn-length').value;
+			blitz.exec('startTurn', {turntimed:turnTimed, turnlength: turnLength || 5});
 		});
 
 		document.querySelector('.reset-turn').addEventListener('click', (e)=>
@@ -149,7 +151,7 @@
 				<input tabindex='0' id='turnTimed' class='turn-timed' type='checkbox'/>
 				<label for='turnTimed'>Timed</label>
 			</div>
-			<input type='text' placeholder='5 seconds'>
+			<input class='turn-length' type='text' defaultvalue='5' placeholder='5 seconds'>
 			<button tabindex='0' class='reset-turn'>Reset Turn</button>
 		</div>
 

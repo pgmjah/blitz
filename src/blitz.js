@@ -193,13 +193,31 @@ BlitzServer.STATUS =
 	ERR_USR_NO_ACCESS:-1002,
 	ERR_NOT_SIGNED_IN:-1003,
 	ERR_ALREADY_SUBMITTED:-1004,
-	ERR_USR_NO_NAME:-1005
+	ERR_USR_NO_NAME:-1005,
+	ERR_TURN_NOT_RUNNING:-1006
 }
+
+_p.coerceParms = function(parms)
+{
+	const ret = {};
+	Object.keys(parms).map((key)=>{
+		const parm = parms[key];
+		if(parm === 'true')
+			ret[key] = true;
+		else if(parm === "false")
+			ret[key] = false;
+		else if(!isNaN(parm))
+			ret[key] = Number(parm);
+		else
+			ret[key] = parm;
+	});
+	return ret;
+};
 
 _p._onRequest = function(request, response)
 {
 	const urlInfo = urls.parse(request.url, true);
-	const parms = urlInfo.query;
+	const parms = this.coerceParms(urlInfo.query);
 
 	if((urlInfo.pathname.search("/proxy/load") == 0) && parms.uri)
 		this.loadProxy(query.uri, request, response);
@@ -241,19 +259,25 @@ _p.turnTimeout = null;
 _p.turnStart = function(parms)
 {
 	this.turnReset();
-	this.turnTimer = setInterval()
+	this.turnRunning = true;
+	this.turnid = uuidv4();
+	this.turnTimer = setTimeout(()=>{
+		this.turnStop();
+	}, parms.turntimed ? parms.turnlength * 1000 : 360000);
+	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn started.", turnid:this.turnid};
 };
 _p.turnStop = function(parms)
 {
 	if(this.turnTimeout)
-		clearInterval(this.turnTimeout);
+		clearTimeout(this.turnTimeout);
 	this.turnRunning = false;
-	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn stopped."};
+	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn stopped.", turnid:this.turnid};
 };
 _p.turnReset = function(parms)
 {
 	this.turnStop();
 	this.turnUsers = [];
+	this.turnid = '';
 	return {"status":BlitzServer.STATUS.SUCCESS, "msg":"Turn reset."};
 };
 
@@ -261,15 +285,17 @@ _p.buzzIn = function(parms)
 {
 	let ret = {};
 	let {username, turnid} = parms;
-
+	if(!this.turnRunning)
+		ret = {"status":BlitzServer.STATUS.ERR_TURN_NOT_RUNNING, "msg":"No turn is currently running", "username":username};
+	else
 	if(!username)
 		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_NAME, "msg":"No username specified.", "username":username};
-	else if(turnid)
+	else if(turnid && (turnid === this.turnid))
 		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
 		this.turnUsers.push(username);
-		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":uuidv4(), "timestamp":new Date()};
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "timestamp":new Date()};
 	}
 	ret.cmd = 'buzzin';
 	return ret;
