@@ -16,6 +16,10 @@ Turns can be timed, if desired.
 
 ## Changelog
 
+* 0.0.8 - Fixed some wordings in admin/server.
+
+* 0.0.7 - Added multi-submit per turn, so users can buzz repeatedly each turn (very dangerous).
+
 * 0.0.6 - Cleanup.
 
 * 0.0.5 - Removed server config info...this is a dedicated server for Blitz, not general purpose.

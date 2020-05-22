@@ -83,7 +83,8 @@
 			const turnStatus = elStartButton.turnStatus;
 			const turnTimed = document.querySelector('.turn-timed').checked;
 			const turnLength = document.querySelector('.turn-length').value;
-			blitz.exec(turnStatus.turnrunning ? 'stopTurn' : 'startTurn', {turntimed:turnTimed, turnlength: turnLength || 5});
+			const turnMultiSubmit = document.querySelector('.turn-multi-submit').checked;
+			blitz.exec(turnStatus.turnrunning ? 'stopTurn' : 'startTurn', {turntimed:turnTimed, turnlength: turnLength || 5, turnmultisubmit:turnMultiSubmit});
 		});
 
 		document.querySelector('.test-turn').addEventListener('click', (e)=>
@@ -189,10 +190,14 @@
 			</div>
 			<input class='turn-length' type='text' defaultvalue='5' placeholder='5 seconds'>
 			<button tabindex='0' class='test-turn'>Test Turn</button>
+			<div>
+				<input tabindex='0' id='turnMultiSubmit' class='turn-multi-submit' type='checkbox'/>
+				<label for='turnMultiSubmit'>User Multi-Submit</label>
+			</div>
 		</div>
 
 		<div class='content-box'>
-			<div class='turn-status-label'><span>Turn Status: </span><span class='time-elapsed'></span></div>
+			<div class='turn-status-label'><span>Buzzed in Users: </span><span class='time-elapsed'></span></div>
 			<div class='turn-status'></div>
 		</div>
 	</div>

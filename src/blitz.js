@@ -26,7 +26,7 @@ function BlitzServer(cfgFilename)
 	}
 	catch(ex)
 	{
-		console.log(cfgFilename ? `Server: error parsing config file: ${cfgFilename} (${ex.message})` : `Server: No config specified.`)
+		console.log(cfgFilename ? `BlitzServer: error parsing config file: ${cfgFilename} (${ex.message})` : `BlitzServer: No config specified.`)
 	}
 
 	this._config = BlitzServer.extend(
@@ -255,6 +255,7 @@ _p.turnCounter = 0;
 _p.turnRunning = false;
 _p.turnUsers = null;
 _p.turnid = -1;
+_p.turnMultiSubmit = false;
 _p.turnTimed = false;
 _p.turnTimeout = null;
 _p.turnTimeStart = null;
@@ -263,6 +264,7 @@ _p.turnStart = function(parms)
 	this.turnReset();
 	this.turnRunning = true;
 	this.turnid = ++this.turnCounter;
+	this.turnMultiSubmit = parms.turnmultisubmit;
 	this.turnTimeStart = new Date();
 	this.turnTimed = parms.turntimed;
 	this.turnTimer = setTimeout(()=>{
@@ -299,8 +301,8 @@ _p.buzzIn = function(parms)
 	else
 	if(!username)
 		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_NAME, "msg":"No username specified.", "username":username};
-	// else if(turnid === this.turnid)
-	// 	ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
+	else if(!this.turnMultiSubmit && (turnid === this.turnid))
+		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
 		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "time":(new Date() - this.turnTimeStart), "timestamp":new Date()};
