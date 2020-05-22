@@ -1,17 +1,17 @@
 {
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"publisher": "pgmjah",
 	"name": "pgmjah-blitz",
 	"displayName": "Blitz",
-	"description": "Simple timer game",
+	"description": "Simple webapp for hosting a trivia type game.",
 	"author": {
 		"name": "pgmjah",
 		"email": "pgmjah@gmail.com"
 	},
 	"license": "MIT",
 	"keywords": [
-		"Trivia Game Server",
-		"HTTP Server",
+		"Trivia Game Hosting",
+		"Buzz in game Server",
 		"Zoom Game"
 	],
 	"main": "./src/blitz.js",
