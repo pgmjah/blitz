@@ -296,11 +296,10 @@ _p.buzzIn = function(parms)
 {
 	let ret = {};
 	let {username, turnid} = parms;
-	if(!this.turnRunning)
-		ret = {"status":BlitzServer.STATUS.ERR_TURN_NOT_RUNNING, "msg":"No turn is currently running", "username":username};
-	else
 	if(!username)
 		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_NAME, "msg":"No username specified.", "username":username};
+	else if(!this.turnRunning)
+		ret = {"status":BlitzServer.STATUS.ERR_TURN_NOT_RUNNING, "msg":"No turn is currently running", "username":username};
 	else if(!this.turnMultiSubmit && (turnid === this.turnid))
 		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
