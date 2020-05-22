@@ -1,5 +1,5 @@
 {
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"publisher": "pgmjah",
 	"name": "pgmjah-blitz",
 	"displayName": "Blitz",
@@ -9,6 +9,10 @@
 		"email": "pgmjah@gmail.com"
 	},
 	"license": "MIT",
+	"repository":{
+		"type":"git",
+		"url":"https://github.com/pgmjah/blitz.git"
+	},
 	"keywords": [
 		"Trivia Game Hosting",
 		"Buzz in game Server",

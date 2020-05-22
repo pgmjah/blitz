@@ -16,6 +16,8 @@ Turns can be timed, if desired.
 
 ## Changelog
 
+* 0.0.9 - Moved git repo to github.
+
 * 0.0.8 - Fixed some wordings in admin/server.
 
 * 0.0.7 - Added multi-submit per turn, so users can buzz repeatedly each turn (very dangerous).
