@@ -7,14 +7,16 @@ So, the admin can then ask the users to answer try and answer the question.  If 
 Turns can be timed, if desired.
 
 ## Install/Run
-* Global - npm install -g pgmjah-blitz will install as a global node program.  To run: blitz config.json
-* Local - npm install pgmjah-blitz. To run node blitz.js config.json
+* Global - npm install -g pgmjah-blitz will install as a global node program.  To run: blitz
+* Local - npm install pgmjah-blitz. To run node blitz.js
 
 ## Run Blitz
 * To run the game client for Blitz go to: http://server:8000/blitz
 * To run the admin for Blitz go to: http://server:8000/blitz/admin
 
 ## Changelog
+
+* 0.0.6 - Cleanup.
 
 * 0.0.5 - Removed server config info...this is a dedicated server for Blitz, not general purpose.
 
