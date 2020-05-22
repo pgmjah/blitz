@@ -1,5 +1,5 @@
 {
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"publisher": "pgmjah",
 	"name": "pgmjah-blitz",
 	"displayName": "Blitz",
@@ -25,8 +25,7 @@
 	"files": [
 		"//src/*",
 		"//public/blitz.html",
-		"//public/admin.html",
-		"blitz.config.json"
+		"//public/admin.html"
 	],
 	"scripts": {
 		"start": "node ./src/clsblitz.js"
