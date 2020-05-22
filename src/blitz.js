@@ -304,8 +304,8 @@ _p.buzzIn = function(parms)
 		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
-		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "time":(new Date() - this.turnTimeStart), "timestamp":new Date()};
 		this.turnUsers.push({"username":username, "timestamp":ret.timestamp, "time":ret.time});
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "turnpos":this.turnUsers.length+1, "time":(new Date() - this.turnTimeStart), "timestamp":new Date()};
 	}
 	ret.cmd = 'buzzin';
 	return ret;
