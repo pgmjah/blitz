@@ -305,7 +305,7 @@ _p.buzzIn = function(parms)
 	else
 	{
 		this.turnUsers.push({"username":username, "timestamp":ret.timestamp, "time":ret.time});
-		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "turnpos":this.turnUsers.length+1, "time":(new Date() - this.turnTimeStart), "timestamp":new Date()};
+		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "turnpos":this.turnUsers.length, "time":(new Date() - this.turnTimeStart), "timestamp":new Date()};
 	}
 	ret.cmd = 'buzzin';
 	return ret;
