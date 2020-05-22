@@ -1,4 +1,7 @@
-﻿const EventEmitter = require("events");
+﻿#!/usr/bin/env node
+//copyright (c) 2019 pgmjah. All rights reserved.
+
+const EventEmitter = require("events");
 const proc = require("child_process");
 const util = require("util");
 const fs = require("fs");

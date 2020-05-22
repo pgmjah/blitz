@@ -108,19 +108,19 @@ _p._onListening = function()
 	let address = this.address();
 	let webRoot = this._config.webApp.webRoot;
 	let maps = this._config.webApp.maps;
-	this.log(util.format("Server: Config File: %s", this._config.filename || "Internal Default"));
-	this.log(util.format("Server: WebRoot - alias: '/%s', dir: %s", webRoot.alias, webRoot.dir));
+	this.log(util.format("BlitzServer: Config File: %s", this._config.filename || "Internal Default"));
+	this.log(util.format("BlitzServer: WebRoot - alias: '/%s', dir: %s", webRoot.alias, webRoot.dir));
 	for(var i = 0; i < maps.length; ++i)
 	{
 		var map = maps[i];
-		this.log(util.format("Server: Map - %s => %s", map.alias, map.dir));
+		this.log(util.format("BlitzServer: Map - %s => %s", map.alias, map.dir));
 	}
-	this.log(util.format("Server: ***** Listening at %s on port %s *****", getLocalIPAddress(), address.port))
+	this.log(util.format("BlitzServer: ***** Listening at %s on port %s *****", getLocalIPAddress(), address.port))
 	process.title = util.format("BlitzServer: listening on port %s", address.port);
 };
 _p._onServerClosed = function()
 {
-	this.log(util.format("Server: ***** CLOSED *****"));
+	this.log(util.format("BlitzServer: ***** CLOSED *****"));
 };
 
 _p._logName = "";
@@ -132,7 +132,7 @@ _p._openLog = function(logPath, bAppend)
 		logPath = logPath || ".\\test.server.log.txt";
 		this._logName = paths.normalize(paths.isAbsolute(logPath) ? logPath : util.format("%s\\%s", paths.parse(require.main.filename).dir, logPath));
 		this._logStream = fs.createWriteStream(this._logName, {flags: bAppend ? "a+" : "w+"});
-		this.log("Server: logging to " + this._logName);
+		this.log("BlitzServer: logging to " + this._logName);
 	}
 };
 
@@ -299,8 +299,8 @@ _p.buzzIn = function(parms)
 	else
 	if(!username)
 		ret = {"status":BlitzServer.STATUS.ERR_USR_NO_NAME, "msg":"No username specified.", "username":username};
-	else if(turnid === this.turnid)
-		ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
+	// else if(turnid === this.turnid)
+	// 	ret = {"status":BlitzServer.STATUS.ERR_ALREADY_SUBMITTED, "msg":"Only one submission per turn.", "username":username};
 	else
 	{
 		ret = {"status":BlitzServer.STATUS.SUCCESS, "msg":"Buzzed in!", "username":username, "turnid":this.turnid, "time":(new Date() - this.turnTimeStart), "timestamp":new Date()};

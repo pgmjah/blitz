@@ -1,12 +1,16 @@
-# blitz README
-Blitz is a simple web server that let's you play a game where the admin can ask question, and the users can press their
-button to respond the fastest.
+# Blitz README
+Blitz is a simple WebApp that can be played over the internet with a video chat, like Zoom.  The admin can control when questions begin, and
+people can press their red button when they know the answer.  The admin can see the list of who buzzed in, in the order they hit the button.
+
+So, the admin can then ask the users to answer try and answer the question.  If one fails, then the next can have a turn.
+
+Turns can be timed, if desired.
 
 ## Install/Run
 * Global - npm install -g pgmjah-blitz will install as a global node program.  To run: blitz config.json
 * Local - npm install pgmjah-blitz. To run node blitz.js config.json
 
-## Blitz
+## Run Blitz
 * To run the game client for Blitz go to: http://server:8000/blitz
 * To run the admin for Blitz go to: http://server:8000/blitz/admin
 
@@ -50,7 +54,9 @@ JSON file to configure the server.
 
 ## Changelog
 
-* 0.0. - Fixed resolving root server context when packaged for standalone running.
+* 0.0.4 - Updated readme, and also fixed some UI with timing issues, and status.
+
+* 0.0.3 - Fixed resolving root server context when packaged for standalone running.
 
 * 0.0.2 - Fixed package.json
 

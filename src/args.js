@@ -1,3 +1,5 @@
+//copyright (c) 2019 pgmjah. All rights reserved.
+
 var util = require("util");
 var args = process.argv.slice(2);
 var oArgs = {};

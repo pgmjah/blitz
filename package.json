@@ -1,5 +1,5 @@
 {
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "pgmjah",
 	"name": "pgmjah-blitz",
 	"displayName": "Blitz",
@@ -9,13 +9,10 @@
 		"email": "pgmjah@gmail.com"
 	},
 	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/pgmjah/tserver.git"
-	},
 	"keywords": [
-		"Game",
-		"Server"
+		"Trivia Game Server",
+		"HTTP Server",
+		"Zoom Game"
 	],
 	"main": "./src/blitz.js",
 	"bin": {

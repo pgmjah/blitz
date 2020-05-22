@@ -32,8 +32,9 @@
 			else{
 				turnInfo = {username:res.username, turnid:res.turnid};
 				let el = document.querySelector('.status-message');
-				el.textContent = `Buzzed at ${res.timestamp}`;
+				el.textContent = `Buzzed in ${res.time}ms`;
 				el.classList.remove('status-message-hidden');
+				el.offsetWidth;//force reflow
 				el.classList.add('status-message-hidden');
 			}
 		});
@@ -138,7 +139,7 @@
 
 		<div class='content-box'>
 			<div class='buzzer-message'>When you know the answer, press the button as fast as you can!</div>
-			<button tabindex='0' class='buzzer-button'>Buzz In!</button>
+			<button tabindex='0' class='buzzer-button'>Blitz!</button>
 			<div class='status-message'></div>
 		</div>
 	</div>

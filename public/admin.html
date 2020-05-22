@@ -67,7 +67,7 @@
 			
 			let statusHTML = '';
 			turnStatus.users.map((user, idx)=>{
-				statusHTML += `<div class='blitz-user'>${user.username}  (${user.time}ms)</div>`;
+				statusHTML += `<div class='blitz-user'>${user.username}  <span class='blitz-user-time'>(${user.time}ms)</span></div>`;
 			});
 			elStatus.innerHTML = statusHTML;
 		}, 100);
@@ -160,12 +160,18 @@
 		}
 		.blitz-user
 		{
+			display:flex;
+			align-items:center;
 			font-size:1.5em;
 			color:black;
 			margin:.25em;
 			padding:.25em;
 			border:1px solid #404040;
 			background-color:#cacaca
+		}
+		.blitz-user-time{
+			font-size:.5em;
+			margin-left:1em;
 		}
 		.test-turn{
 			display:none;
