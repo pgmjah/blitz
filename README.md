@@ -16,6 +16,8 @@ Turns can be timed, if desired.
 
 ## Changelog
 
+* 0.0.13 - Fixed but with buzz in position.
+
 * 0.0.12 - Added user's buzz in position to status message.
 
 * 0.0.11 - Changed order of error checking for username first.
